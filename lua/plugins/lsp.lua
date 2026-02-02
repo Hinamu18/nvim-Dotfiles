@@ -3,10 +3,11 @@ return {
   dependencies = {
     "williamboman/mason.nvim",
     "williamboman/mason-lspconfig.nvim",
+    "hrsh7th/cmp-nvim-lsp",
   },
   config = function()
     require("mason").setup()
-
+    local capabilities = require("cmp_nvim_lsp").default_capabilities()
     require("mason-lspconfig").setup({
       ensure_installed = {
         -- System & Low Level
@@ -35,12 +36,15 @@ return {
       handlers = {
         -- Default handler for most languages
         function(server_name)
-          require("lspconfig")[server_name].setup({})
+          require("lspconfig")[server_name].setup({
+	  capabilities = capabilities
+  	})
         end,
 
         -- Special handler for Lua (fixes "undefined global 'vim'" warning)
         ["lua_ls"] = function()
           require("lspconfig").lua_ls.setup({
+		  capabilities = capabilities,
             settings = {
               Lua = {
                 diagnostics = {
